@@ -1,0 +1,58 @@
+Guía para Penetration Testing: Escaneo y Escalada de Privilegios
+
+1. Preparación de la Máquina:
+   - Descarga de los archivos de la máquina desde https://mega.nz/file/UacxFKDR#G5KBHBt8ASB0lHPuttnaxKROAa40FMGrvBoIBf6ak0E.
+   - Descompresión de los archivos descargados.
+   - Ejecución del comando `auto_deploy.sh trust.tar` para arrancar la máquina en nuestro sistema.
+   - Apertura de una nueva ventana de comandos para dejar correr la máquina.
+
+2. Escaneo de la Red y Mapeo de Puertos:
+   - Comprobación de la conectividad con un `ping -c`.
+   - Utilización de `nmap` para mapear todos los puertos y servicios detrás de la máquina.
+     ```bash
+     nmap -p- -sS -sC -sV --min-rate 3000 -n -vvv -Pn 172.17.0.2 -oN /home/kali/Desktop/machine_Trust/escaneo
+     ```
+
+3. Análisis de Servicios y Puertos Abiertos:
+   - Observación de los servicios y puertos abiertos, como SSH y Apache.
+   - Identificación de versiones de software y sistema operativo.
+
+4. Exploración de la Página Web:
+   - Acceso a la página web a través del navegador utilizando la IP proporcionada.
+
+5. Escaneo de Directorios con Gobuster:
+   - Uso de Gobuster con diccionarios de directorios web para realizar ataques de fuerza bruta y encontrar enlaces ocultos.
+     ```bash
+     gobuster dir -u http://172.17.0.2 -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt
+     ```
+   - Prueba con otros diccionarios y extensiones para comprobar archivos en la raid:
+     ```bash
+     gobuster dir -u http://172.17.0.2/ -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -t 200 -x html,txt,php
+     ```
+
+6. Ataques de Fuerza Bruta:
+   - Realización de ataques de fuerza bruta SSH con Hydra utilizando diccionarios de contraseñas.
+     ```bash
+     hydra -l mario -P /usr/share/wordlists/rockyou.txt 172.17.0.2 ssh -t 64
+     ```
+
+7. Acceso y Escalada de Privilegios:
+   - Conexión por SSH utilizando las credenciales obtenidas.
+   - Identificación de comandos ejecutables por el usuario actual con `sudo -l`.
+   - Búsqueda de vulnerabilidades para la escalada de privilegios.
+   - Utilización de repositorios y herramientas externas para obtener acceso como usuario root.
+
+Para complementar la guía y asegurarnos de cubrir todos los aspectos importantes, podríamos considerar lo siguiente:
+
+1. **Enumeración de Usuarios y Grupos:**
+    
+    - Después de obtener acceso al sistema, es útil enumerar los usuarios y grupos del sistema para identificar posibles objetivos adicionales.
+2. **Revisión de Logs y Eventos:**
+    
+    - Es importante revisar los logs del sistema en busca de información relevante, como intentos de acceso fallidos, actividades sospechosas u otros eventos significativos.
+3. **Análisis de Vulnerabilidades:**
+    
+    - Realizar un análisis de vulnerabilidades en los servicios y aplicaciones encontradas puede revelar posibles puntos de explotación adicionales.
+4. **Extracción de Información Sensible:**
+    
+    - Durante el proceso de escalada de privilegios, es posible encontrar información sensible o credenciales que pueden ser útiles para futuros ataques o para la generación de informes.
